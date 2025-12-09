@@ -1,0 +1,10 @@
+{
+	"id": "memry",
+	"name": "memry",
+	"version": "1.0.0",
+	"minAppVersion": "0.15.0",
+	"description": "a simple obsidian note-based spaced repetition plugin",
+	"author": "jcobn",
+	"authorUrl": "https://github.com/jcobn",
+	"isDesktopOnly": false
+}
