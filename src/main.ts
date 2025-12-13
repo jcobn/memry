@@ -29,7 +29,7 @@ export default class MemryPlugin extends Plugin {
 		this.commands.addCommands();
 
 		this.dataStore = new DataStore(this);
-		this.dataStore.load();
+		await this.dataStore.load();
 
 		this.addSettingTab(new SampleSettingTab(this.app, this));
 	}
