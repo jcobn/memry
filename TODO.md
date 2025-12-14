@@ -32,6 +32,7 @@ Simple Stats
 Total reviews, due reviews, and review streaks.
 auto backup srs data srs-data.json.bak
 srs_data.json versioning
+check data.json when loading
 
 other:
 Integrated Obsidian Review Mode
