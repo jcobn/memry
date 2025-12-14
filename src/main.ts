@@ -1,31 +1,16 @@
-import {
-  App,
-  Editor,
-  MarkdownView,
-  Modal,
-  Notice,
-  Plugin,
-  PluginSettingTab,
-  Setting,
-} from "obsidian";
+import { App, Notice, Plugin, PluginSettingTab, Setting } from "obsidian";
 import Commands from "./commands";
-import { DataStore } from "./data";
-
-interface MemrySettings {
-  mySetting: string;
-}
-
-const DEFAULT_SETTINGS: MemrySettings = {
-  mySetting: "default",
-};
+import {  SRSManager } from "./srsManager";
+import { DataManager } from "./dataManager";
 
 export default class MemryPlugin extends Plugin {
-  settings: MemrySettings;
   commands: Commands;
-  dataStore: DataStore;
+  srsManager: SRSManager;
+  dataManager: DataManager;
 
   async onload() {
-    await this.loadSettings();
+    this.dataManager = new DataManager(this);
+    await this.dataManager.load();
 
     const ribbonIconEl = this.addRibbonIcon(
       "calendar-check",
@@ -41,29 +26,12 @@ export default class MemryPlugin extends Plugin {
     this.commands = new Commands(this);
     this.commands.addCommands();
 
-    this.dataStore = new DataStore(this);
-    await this.dataStore.load();
+    this.srsManager = new SRSManager(this);
 
     this.addSettingTab(new SampleSettingTab(this.app, this));
   }
 
   onunload() {}
-
-  async loadSettings() {
-    const data = await this.loadData();
-    if (!!data?.settings) {
-      this.settings = Object.assign({}, DEFAULT_SETTINGS, data?.settings);
-    } else {
-      this.settings = DEFAULT_SETTINGS;
-    }
-  }
-
-  async saveSettings() {
-    await this.saveData({
-      settings: this.settings,
-      srsData: this.dataStore.srsData,
-    });
-  }
 }
 
 class SampleSettingTab extends PluginSettingTab {
@@ -85,10 +53,10 @@ class SampleSettingTab extends PluginSettingTab {
       .addText((text) =>
         text
           .setPlaceholder("Enter your secret")
-          .setValue(this.plugin.settings.mySetting)
+          .setValue(this.plugin.dataManager.settings.mySetting)
           .onChange(async (value) => {
-            this.plugin.settings.mySetting = value;
-            await this.plugin.saveSettings();
+            this.plugin.dataManager.settings.mySetting = value;
+            await this.plugin.dataManager.save();
           })
       );
   }

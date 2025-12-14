@@ -15,11 +15,11 @@ export default class Commands {
       id: "test",
       name: "Test",
       callback: async () => {
-        const id = await this.plugin.dataStore.createSet(
+        const id = await this.plugin.srsManager.createSet(
           "test set",
           "does this work chat?"
         );
-        await this.plugin.dataStore.upsertNote("economics.md", {
+        await this.plugin.srsManager.upsertNote("economics.md", {
           setId: id,
           lastReview: null,
           nextReview: Date.now() + 86400000,
@@ -28,6 +28,13 @@ export default class Commands {
           reps: 0,
           lapses: 0,
         });
+      },
+    });
+    plugin.addCommand({
+      id: "load",
+      name: "Load",
+      callback: async () => {
+        await this.plugin.dataManager.load();
       },
     });
   }
