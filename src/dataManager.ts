@@ -30,7 +30,7 @@ export interface NoteState {
 
 export interface SetState {
   name: string;
-  description: string;
+  description: string | null;
   createdAt: number;
 }
 
@@ -52,7 +52,7 @@ export class DataManager {
     this.plugin = plugin;
   }
 
-  async load() {
+  async init() {
     let toSave = false;
     const data = await this.plugin.loadData();
     if (!!data?.settings) {
@@ -68,11 +68,12 @@ export class DataManager {
       toSave = true;
     }
     if (toSave) {
-      this.save();
+      await this.save();
     }
   }
 
   async save() {
+    await this.plugin.dashboard.rerender();
     await this.plugin.saveData({
       settings: this.settings,
       srsData: this.srsData,
