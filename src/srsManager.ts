@@ -1,3 +1,4 @@
+import { DAY_TO_MILLIS } from "./dashboard";
 import { DataManager, NoteState } from "./dataManager";
 import MemryPlugin from "./main";
 import { randomUUID } from "crypto";
@@ -13,13 +14,11 @@ export class SRSManager {
 
   async upsertNote(id: string, updated: NoteState) {
     this.store.srsData.notes[id] = updated;
-    this.store.srsData.metadata.updatedAt = Date.now();
     await this.save();
   }
 
   async deleteNote(id: string) {
     delete this.store.srsData.notes[id];
-    this.store.srsData.metadata.updatedAt = Date.now();
     await this.save();
   }
 
@@ -46,6 +45,7 @@ export class SRSManager {
   }
 
   private async save() {
+    this.store.srsData.metadata.updatedAt = Date.now();
     await this.store.save();
   }
 
@@ -53,5 +53,16 @@ export class SRSManager {
     const ar = path.split("/");
     const l = ar.length;
     return ar[l - 1];
+  }
+
+  public async markAsLearned(nr: Record<string, NoteState>) {
+    const path: string = Object.keys(nr)[0];
+    const note = Object.values(nr)[0];
+    this.store.srsData.notes[path].lastReview = Date.now();
+    this.store.srsData.notes[path].nextReview = Date.now() + DAY_TO_MILLIS;
+    note.reps += 1;
+    note.lapses = 0;
+
+    await this.save();
   }
 }

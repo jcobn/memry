@@ -20,3 +20,36 @@
   font-size: 0.85em;
   opacity: 0.8;
 }
+
+.srs-actions {
+  margin-top: 6px;
+}
+
+.srs-btn {
+  appearance: none;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 0.85em;
+  cursor: pointer;
+  background: var(--background-secondary);
+  color: var(--text-normal);
+  transition: background 0.15s ease, transform 0.05s ease;
+}
+
+.srs-btn:hover {
+  background: var(--background-secondary-alt);
+}
+
+.srs-btn:active {
+  transform: translateY(1px);
+}
+
+.srs-btn-learned {
+  border-color: var(--color-green);
+  color: var(--color-green);
+}
+
+.srs-btn-learned:hover {
+  background: rgba(0, 200, 0, 0.1);
+}

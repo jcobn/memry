@@ -3,6 +3,7 @@ import MemryPlugin from "./main";
 import { NoteState } from "./dataManager";
 
 const DASHBOARD_PATH: string = "memry dashboard.md";
+export const DAY_TO_MILLIS = 24 * 60 * 60 * 1000;
 
 export class Dashboard {
   plugin: MemryPlugin;
@@ -26,7 +27,6 @@ export class Dashboard {
           el.createEl("p", { text: "No SRS notes yet." });
           return;
         }
-        el.createEl("p", { text: new Date(Date.now()).toLocaleTimeString() }); //TODO: dev, remove
 
         const notesBySet: Record<string, Record<string, NoteState>[]> = {};
         for (const [id, note] of Object.entries(notes)) {
@@ -43,7 +43,7 @@ export class Dashboard {
           const setNotes = notesBySet[setId] || [];
 
           const setContainer = el.createEl("div", { cls: "srs-set" });
-          setContainer.createEl("h3", { text: set.name });
+          setContainer.createEl("h3", { text: "🎯 " + set.name });
 
           if (set.description) {
             setContainer.createEl("p", {
@@ -69,11 +69,10 @@ export class Dashboard {
             const li = ul.createEl("li");
 
             if (!path) continue;
-            //li.createEl("a", { text: note.setId + " – " });
             li.createSpan().innerHTML = `
             <a href="obsidian://open?vault=${this.plugin.app.vault.getName()}&file=${path}">${this.plugin.srsManager.getNoteName(
               path
-            )}</a> - 
+            )}</a> — 
             `;
 
             let info = `${
@@ -81,6 +80,9 @@ export class Dashboard {
                 ? "not reviewing yet."
                 : "next review: " +
                   new Date(note.nextReview).toLocaleDateString() +
+                  " (in " +
+                  Math.round((note.nextReview - Date.now()) / DAY_TO_MILLIS) +
+                  " day/s)" +
                   ", last review: " +
                   new Date(note.lastReview).toLocaleDateString()
             }`;
@@ -92,6 +94,16 @@ export class Dashboard {
             `;
             const span = li.createEl("span", { cls: "srs-note-info" });
             span.innerHTML = info;
+            li.createEl("br");
+            if (note.lastReview === null) {
+              const b = li.createEl("button", {
+                text: "✓ mark as learned",
+                cls: "srs-btn srs-btn-learned",
+              });
+              b.onclick = async () => {
+                await this.plugin.srsManager.markAsLearned({ [path]: note });
+              };
+            }
           }
         }
       }
