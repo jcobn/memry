@@ -1,6 +1,7 @@
 import { Modal } from "obsidian";
 import MemryPlugin from "./main";
 import { CreateSetModal } from "./modals/CreateSetModal";
+import { getReviewQueue } from "./utils/srsLogic";
 
 export default class Commands {
   plugin: MemryPlugin;
@@ -15,8 +16,8 @@ export default class Commands {
     plugin.addCommand({
       id: "test",
       name: "Test",
-      callback: async () => {
-        await this.plugin.dashboard.rerender();
+      callback: () => {
+        console.log(getReviewQueue(this.plugin.dataManager.srsData.notes));
       },
     });
     plugin.addCommand({

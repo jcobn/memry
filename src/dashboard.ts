@@ -1,6 +1,7 @@
 import { TFile } from "obsidian";
 import MemryPlugin from "./main";
 import { NoteState } from "./managers/DataManager";
+import { daysBetween } from "./utils/time";
 
 export const DAY_TO_MILLIS = 24 * 60 * 60 * 1000;
 
@@ -80,16 +81,16 @@ export class Dashboard {
                 : "next review: " +
                   new Date(note.nextReview).toLocaleDateString() +
                   " (in " +
-                  Math.round((note.nextReview - Date.now()) / DAY_TO_MILLIS) +
+                  daysBetween(Date.now(), note.nextReview) +
                   " day/s)" +
-                  ", last review: " +
-                  new Date(note.lastReview).toLocaleDateString()
+                  ", last review " +
+                  (daysBetween(note.lastReview, Date.now()) === 0
+                    ? "today"
+                    : daysBetween(note.lastReview, Date.now()) + " day(s) ago")
             }`;
             info += `<br>
-            S: ${note.stability.toFixed(1)}, D: ${note.difficulty.toFixed(
-              1
-            )}<br>
-            reps: ${note.reps}, lapses: ${note.lapses}
+            S: ${note.stability.toFixed(1)}, D: ${note.difficulty.toFixed(1)}, 
+            reps: ${note.reps}
             `;
             const span = li.createEl("span", { cls: "srs-note-info" });
             span.innerHTML = info;

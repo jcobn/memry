@@ -25,7 +25,6 @@ export interface NoteState {
   stability: number;
   difficulty: number;
   reps: number;
-  lapses: number;
 }
 
 export interface SetState {

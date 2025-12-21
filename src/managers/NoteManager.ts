@@ -65,7 +65,6 @@ export class NoteManager {
     this.store.srsData.notes[path].lastReview = Date.now();
     this.store.srsData.notes[path].nextReview = Date.now() + DAY_TO_MILLIS;
     note.reps += 1;
-    note.lapses = 0;
 
     await this.save();
   }
@@ -80,10 +79,11 @@ export class NoteManager {
       stability: INITIAL_STABILITY,
       difficulty: INITIAL_DIFFICULTY,
       reps: 0,
-      lapses: 0,
     };
     this.store.srsData.notes[path] = newNote;
     await this.save();
     return true;
   }
+
+  
 }
