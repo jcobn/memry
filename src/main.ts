@@ -1,22 +1,30 @@
 import {
   App,
+  Component,
+  Menu,
+  MenuItem,
   Notice,
   Plugin,
   PluginSettingTab,
   Setting,
+  TAbstractFile,
+  TFile,
+  TFolder,
   WorkspaceLeaf,
 } from "obsidian";
-import Commands from "./commands";
-import { SRSManager } from "./srsManager";
-import { DataManager } from "./dataManager";
-import { Dashboard } from "./dashboard";
+import Commands from "./Commands";
+import { DataManager } from "./managers/DataManager";
+import { Dashboard } from "./Dashboard";
+import { NoteManager } from "./managers/NoteManager";
+import { MenuItems } from "./MenuItems";
 
 export default class MemryPlugin extends Plugin {
   commands: Commands;
-  srsManager: SRSManager;
+  noteManager: NoteManager;
   dataManager: DataManager;
   dashboard: Dashboard;
   statusBar: HTMLElement;
+  menuItems: MenuItems;
 
   async onload() {
     this.dataManager = new DataManager(this);
@@ -33,15 +41,18 @@ export default class MemryPlugin extends Plugin {
     this.statusBar = this.addStatusBarItem();
     this.statusBar.setText("X notes to review.");
 
-    this.commands = new Commands(this);
-    this.commands.addCommands();
+    this.noteManager = new NoteManager(this);
 
-    this.srsManager = new SRSManager(this);
-
-    this.addSettingTab(new SampleSettingTab(this.app, this));
+    this.addSettingTab(new DashboardPathSettingTab(this.app, this));
 
     this.dashboard = new Dashboard(this);
     await this.dashboard.init();
+
+    this.commands = new Commands(this);
+    this.commands.addCommands();
+
+    this.menuItems = new MenuItems(this);
+    this.menuItems.init();
 
     /* this.registerView(
       SRS_VIEW_TYPE,
@@ -65,7 +76,7 @@ export default class MemryPlugin extends Plugin {
   }
 }
 
-class SampleSettingTab extends PluginSettingTab {
+class DashboardPathSettingTab extends PluginSettingTab {
   plugin: MemryPlugin;
 
   constructor(app: App, plugin: MemryPlugin) {
@@ -79,14 +90,14 @@ class SampleSettingTab extends PluginSettingTab {
     containerEl.empty();
 
     new Setting(containerEl)
-      .setName("Setting #1")
-      .setDesc("It's a secret")
+      .setName("dashboard path")
+      .setDesc("will require restarting Obsidian")
       .addText((text) =>
         text
-          .setPlaceholder("Enter your secret")
-          .setValue(this.plugin.dataManager.settings.mySetting)
+          .setPlaceholder("memry dashboard.md")
+          .setValue(this.plugin.dataManager.settings.dashboardPath)
           .onChange(async (value) => {
-            this.plugin.dataManager.settings.mySetting = value;
+            this.plugin.dataManager.settings.dashboardPath = value;
             await this.plugin.dataManager.save();
           })
       );

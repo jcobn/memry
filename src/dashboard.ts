@@ -1,8 +1,7 @@
 import { TFile } from "obsidian";
 import MemryPlugin from "./main";
-import { NoteState } from "./dataManager";
+import { NoteState } from "./managers/DataManager";
 
-const DASHBOARD_PATH: string = "memry dashboard.md";
 export const DAY_TO_MILLIS = 24 * 60 * 60 * 1000;
 
 export class Dashboard {
@@ -20,8 +19,8 @@ export class Dashboard {
 
         el.createEl("h2", { text: "📚 Notes" });
 
-        const notes = this.plugin.srsManager.getAllNotes();
-        const sets = this.plugin.srsManager.getAllSets();
+        const notes = this.plugin.noteManager.getAllNotes();
+        const sets = this.plugin.noteManager.getAllSets();
 
         if (!Object.entries(notes).length) {
           el.createEl("p", { text: "No SRS notes yet." });
@@ -70,7 +69,7 @@ export class Dashboard {
 
             if (!path) continue;
             li.createSpan().innerHTML = `
-            <a href="obsidian://open?vault=${this.plugin.app.vault.getName()}&file=${path}">${this.plugin.srsManager.getNoteName(
+            <a href="obsidian://open?vault=${this.plugin.app.vault.getName()}&file=${path}">${this.plugin.noteManager.getNoteName(
               path
             )}</a> — 
             `;
@@ -101,7 +100,7 @@ export class Dashboard {
                 cls: "srs-btn srs-btn-learned",
               });
               b.onclick = async () => {
-                await this.plugin.srsManager.markAsLearned({ [path]: note });
+                await this.plugin.noteManager.markAsLearned({ [path]: note });
               };
             }
           }
@@ -115,7 +114,9 @@ export class Dashboard {
   }
 
   public async rerender() {
-    const file = this.plugin.app.vault.getAbstractFileByPath(DASHBOARD_PATH);
+    const file = this.plugin.app.vault.getAbstractFileByPath(
+      this.plugin.dataManager.settings.dashboardPath
+    );
     if (!(file instanceof TFile)) return;
 
     let content = await this.plugin.app.vault.read(file);
@@ -129,12 +130,16 @@ export class Dashboard {
   }
 
   async ensureDashboardNote() {
-    const existing =
-      this.plugin.app.vault.getAbstractFileByPath(DASHBOARD_PATH);
+    const existing = this.plugin.app.vault.getAbstractFileByPath(
+      this.plugin.dataManager.settings.dashboardPath
+    );
 
     if (existing instanceof TFile) return existing;
     const content = `\n\`\`\`memry-dashboard\n${Date.now()}\n\`\`\``;
 
-    return await this.plugin.app.vault.create(DASHBOARD_PATH, content);
+    return await this.plugin.app.vault.create(
+      this.plugin.dataManager.settings.dashboardPath,
+      content
+    );
   }
 }

@@ -1,11 +1,11 @@
-import MemryPlugin from "./main";
+import MemryPlugin from "../main";
 
 interface MemrySettings {
-  mySetting: string;
+  dashboardPath: string;
 }
 
 const DEFAULT_SETTINGS: MemrySettings = {
-  mySetting: "default",
+  dashboardPath: "memry dashboard.md",
 };
 
 const SRS_DATA_VERSION = 1;
