@@ -1,7 +1,9 @@
 import { TFile } from "obsidian";
 import MemryPlugin from "./main";
 import { NoteState } from "./managers/DataManager";
-import { daysBetween } from "./utils/time";
+import { daysBetween, daysLate } from "./utils/time";
+import { isDue, isFragile, isLearned } from "./utils/srsLogic";
+import { title } from "process";
 
 export const DAY_TO_MILLIS = 24 * 60 * 60 * 1000;
 
@@ -69,6 +71,18 @@ export class Dashboard {
             const li = ul.createEl("li");
 
             if (!path) continue;
+            if (isDue(note)) {
+              li.createSpan({
+                text: daysLate(note.nextReview) >= 1 ? "‼️ " : "❗ ",
+                attr: { title: "due" },
+              });
+            }
+            const badge = isFragile(note)
+              ? { text: "🔴", attr: { title: "fragile" } }
+              : isLearned(note)
+              ? { text: "🟢", attr: { title: "learned" } }
+              : { text: "🟡", attr: { title: "learning" } };
+            li.createSpan(badge);
             li.createSpan().innerHTML = `
             <a href="obsidian://open?vault=${this.plugin.app.vault.getName()}&file=${path}">${this.plugin.noteManager.getNoteName(
               path
