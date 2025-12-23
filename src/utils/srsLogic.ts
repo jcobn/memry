@@ -1,6 +1,6 @@
 import { DAY_TO_MILLIS } from "src/Dashboard";
 import { NoteState } from "src/managers/DataManager";
-import { daysLate, now, startOfDay } from "./time";
+import { daysLate, daysLateAssert, now, startOfDay } from "./time";
 
 export enum Rating {
   AGAIN = 1, //failed recall
@@ -60,7 +60,7 @@ export function getStabilityAfterSuccess(
     rating === Rating.HARD ? 1.1 : rating === Rating.GOOD ? 1.8 : 2.5;
 
   const difficultyPenalty = 1 - (difficulty - 5) * 0.05;
-  const latenessPenalty = Math.max(0.7, 1 - daysLate(nextReview) * 0.05);
+  const latenessPenalty = Math.max(0.7, 1 - daysLateAssert(nextReview) * 0.05);
 
   const growth = baseGrowth * difficultyPenalty * latenessPenalty;
 
@@ -115,7 +115,7 @@ export function isNotLearnedYet(
 }
 
 export function reviewPriority(note: NoteState): number {
-  const overdueDays = daysLate(note.nextReview);
+  const overdueDays = daysLate(note);
   const score = getKnowledgeScore(note);
   const fragileBonus = isFragile(note) ? 20 : 0;
   return overdueDays * 10 + fragileBonus + (100 - score);

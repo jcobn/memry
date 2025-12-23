@@ -1,11 +1,4 @@
-import {
-  Menu,
-  MenuItem,
-  Notice,
-  TAbstractFile,
-  TFile,
-  TFolder,
-} from "obsidian";
+import { Menu, MenuItem, TFile, TFolder } from "obsidian";
 import MemryPlugin from "./main";
 import { errorNotice, memryNotice } from "./utils/notice";
 import { getNoteName } from "./utils/srsLogic";
@@ -84,12 +77,21 @@ export class MenuItems {
 
       if (action === FolderAction.REMOVE) {
         item.onClick(async (_) => {
-          let ct = 0;
-          for (const ch of file.children) {
-            if (!(ch instanceof TFile)) continue;
-            if (await this.plugin.noteManager.deleteNote(ch.path)) ct++;
-          }
-          memryNotice("removed " + ct + " notes from memry");
+          new ConfirmModal(
+            this.plugin.app,
+            "remove all subfiles",
+            "are you sure you want to remove all the subfiles of " +
+              file.name +
+              " from memry?",
+            async () => {
+              let ct = 0;
+              for (const ch of file.children) {
+                if (!(ch instanceof TFile)) continue;
+                if (await this.plugin.noteManager.deleteNote(ch.path)) ct++;
+              }
+              memryNotice("removed " + ct + " notes from memry");
+            }
+          ).open();
         });
         return;
       }

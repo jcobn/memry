@@ -1,17 +1,4 @@
-import {
-  App,
-  Component,
-  Menu,
-  MenuItem,
-  Notice,
-  Plugin,
-  PluginSettingTab,
-  Setting,
-  TAbstractFile,
-  TFile,
-  TFolder,
-  WorkspaceLeaf,
-} from "obsidian";
+import { App, Plugin, PluginSettingTab, Setting } from "obsidian";
 import Commands from "./Commands";
 import { DataManager } from "./managers/DataManager";
 import { Dashboard } from "./Dashboard";

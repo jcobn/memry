@@ -1,4 +1,5 @@
 import { DAY_TO_MILLIS } from "src/Dashboard";
+import { NoteState } from "src/managers/DataManager";
 
 export function daysBetween(a: number, b: number): number {
   const d1 = new Date(a);
@@ -10,7 +11,12 @@ export function daysBetween(a: number, b: number): number {
   return Math.round((d2.getTime() - d1.getTime()) / DAY_TO_MILLIS);
 }
 
-export function daysLate(nextReview: number): number {
+export function daysLate(note: NoteState): number {
+  if (note.lastReview === null) return 0;
+  return Math.max(0, daysBetween(note.nextReview, Date.now()));
+}
+
+export function daysLateAssert(nextReview: number): number {
   return Math.max(0, daysBetween(nextReview, Date.now()));
 }
 

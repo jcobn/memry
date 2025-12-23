@@ -2,8 +2,15 @@ import { TFile } from "obsidian";
 import MemryPlugin from "./main";
 import { NoteState } from "./managers/DataManager";
 import { daysBetween, daysLate } from "./utils/time";
-import { getNoteName, isDue, isFragile, isLearned, isNotLearnedYet } from "./utils/srsLogic";
-import { title } from "process";
+import {
+  getKnowledgeScore,
+  getNoteName,
+  getReviewQueue,
+  isDue,
+  isFragile,
+  isLearned,
+  isNotLearnedYet,
+} from "./utils/srsLogic";
 
 export const DAY_TO_MILLIS = 24 * 60 * 60 * 1000;
 
@@ -20,7 +27,33 @@ export class Dashboard {
       async (source, el, ctx) => {
         el.empty();
 
-        el.createEl("h2", { text: "📚 Notes" });
+        el.createEl("h2", { text: "📊 stats" });
+        el.createEl("p", { text: "tracked notes / learning: " }).createEl(
+          "code",
+          {
+            text:
+              Object.keys(
+                this.plugin.noteManager.getAllNotes()
+              ).length.toString() +
+              " / " +
+              Object.values(this.plugin.noteManager.getAllNotes()).filter(
+                (n) => {
+                  return n.lastReview !== null;
+                }
+              ).length,
+          }
+        );
+        el.createEl("p", { text: "due today / overdue: " }).createEl("code", {
+          text: `${
+            getReviewQueue(this.plugin.noteManager.getAllNotes()).length
+          } / ${
+            Object.values(this.plugin.noteManager.getAllNotes()).filter((a) => {
+              return daysLate(a) > 0;
+            }).length
+          }`,
+        });
+
+        el.createEl("h2", { text: "📚 all notes" });
 
         const notes = this.plugin.noteManager.getAllNotes();
         const sets = this.plugin.noteManager.getAllSets();
@@ -73,9 +106,8 @@ export class Dashboard {
             if (!path) continue;
             if (!isNotLearnedYet(note)) {
               if (isDue(note)) {
-                console.log(path + " " + daysLate(note.nextReview));
                 li.createSpan({
-                  text: daysLate(note.nextReview) >= 1 ? "‼️ " : "❗ ",
+                  text: daysLate(note) >= 1 ? "‼️ " : "❗ ",
                   attr: { title: "due" },
                 });
               }
@@ -85,6 +117,9 @@ export class Dashboard {
                 ? { text: "🟢", attr: { title: "learned" } }
                 : { text: "🟡", attr: { title: "learning" } };
               li.createSpan(badge);
+              li.createEl("code", {
+                text: ` ${Math.round(getKnowledgeScore(note))}% `,
+              });
             }
             li.createSpan().innerHTML = `
             <a href="obsidian://open?vault=${this.plugin.app.vault.getName()}&file=${path}">${getNoteName(
@@ -95,11 +130,9 @@ export class Dashboard {
             let info = `${
               isNotLearnedYet(note)
                 ? "not reviewing yet."
-                : "next review: " +
-                  new Date(note.nextReview).toLocaleDateString() +
-                  " (in " +
+                : "next review in " +
                   daysBetween(Date.now(), note.nextReview) +
-                  " day/s)" +
+                  " day(s)" +
                   ", last review " +
                   (daysBetween(note.lastReview!, Date.now()) === 0
                     ? "today"

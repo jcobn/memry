@@ -1,7 +1,5 @@
-import { Modal } from "obsidian";
 import MemryPlugin from "./main";
 import { CreateSetModal } from "./modals/CreateSetModal";
-import { getReviewQueue } from "./utils/srsLogic";
 import { ReviewModal } from "./modals/ReviewModal";
 import { SetPickerModal } from "./modals/SetPickerModal";
 import { memryNotice } from "./utils/notice";
@@ -17,14 +15,6 @@ export default class Commands {
 
   addCommands() {
     const plugin = this.plugin;
-
-    plugin.addCommand({
-      id: "load",
-      name: "Load (dev)",
-      callback: async () => {
-        await this.plugin.dataManager.init();
-      },
-    });
 
     plugin.addCommand({
       id: "create-set",

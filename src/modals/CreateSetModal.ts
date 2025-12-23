@@ -1,4 +1,4 @@
-import { App, ButtonComponent, Modal, Notice, Setting, Value } from "obsidian";
+import { ButtonComponent, Modal, Setting } from "obsidian";
 import MemryPlugin from "src/main";
 import { memryNotice } from "src/utils/notice";
 

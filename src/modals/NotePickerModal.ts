@@ -1,4 +1,4 @@
-import { App, SuggestModal } from "obsidian";
+import { SuggestModal } from "obsidian";
 import MemryPlugin from "src/main";
 import { NoteState } from "src/managers/DataManager";
 import { getNoteName } from "src/utils/srsLogic";

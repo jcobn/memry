@@ -54,7 +54,7 @@ export class DataManager {
   async init() {
     let toSave = false;
     const data = await this.plugin.loadData();
-    if (!!data?.settings) {
+    if (data?.settings) {
       this.settings = Object.assign({}, DEFAULT_SETTINGS, data?.settings);
     } else {
       this.settings = DEFAULT_SETTINGS;
