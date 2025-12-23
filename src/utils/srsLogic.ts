@@ -76,10 +76,9 @@ export function getScheduledNoteState(
   rating: Rating
 ): NoteState {
   let stability: number;
-  let difficulty: number;
+  const difficulty: number = getUpdatedDifficulty(note.difficulty, rating);
   let reps: number;
 
-  difficulty = getUpdatedDifficulty(note.difficulty, rating);
   if (rating === Rating.AGAIN) {
     stability = getStabilityAfterFail();
     reps = 0;
@@ -126,7 +125,9 @@ export function getReviewQueue(
   notes: Record<string, NoteState>
 ): { path: string; note: NoteState }[] {
   return Object.entries(notes)
-    .filter(([_, note]) => isDue(note))
+    .filter(([_, note]) => {
+      return isDue(note) && !isNotLearnedYet(note);
+    })
     .map(([path, note]) => ({ path, note }))
     .sort((a, b) => reviewPriority(b.note) - reviewPriority(a.note));
 }

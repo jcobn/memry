@@ -98,5 +98,4 @@ export class ReviewModal extends Modal {
     }`;
   }
 
-  onClose(): void {}
 }

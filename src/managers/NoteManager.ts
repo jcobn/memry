@@ -21,13 +21,15 @@ export class NoteManager {
   }
 
   async deleteNote(id: string) {
+    const ex: boolean = id in this.store.srsData.notes;
     delete this.store.srsData.notes[id];
     await this.save();
+    return ex;
   }
 
   async createSet(name: string, description: string | null = null) {
     let id: string = randomUUID().toString();
-    while (!!this.store.srsData.sets[id]) {
+    while (this.store.srsData.sets[id]) {
       id = randomUUID().toString();
     }
     this.store.srsData.sets[id] = {
@@ -35,9 +37,21 @@ export class NoteManager {
       description: null,
       createdAt: Date.now(),
     };
-    if (!!description) this.store.srsData.sets[id].description = description;
+    if (description) this.store.srsData.sets[id].description = description;
     await this.save();
     return id;
+  }
+
+  public async deleteSet(setId: string): Promise<boolean> {
+    let good = true;
+    for (const [noteId, note] of Object.entries(this.getAllNotes())) {
+      if (note.setId === setId) good = false;
+    }
+    if (good) {
+      delete this.store.srsData.sets[setId];
+      await this.save();
+    }
+    return good;
   }
 
   public getAllNotes() {
@@ -53,7 +67,6 @@ export class NoteManager {
     await this.store.save();
   }
 
-
   public async markAsLearned(nr: Record<string, NoteState>) {
     const path: string = Object.keys(nr)[0];
     const note = Object.values(nr)[0];
@@ -65,7 +78,7 @@ export class NoteManager {
   }
 
   public async trackNote(path: string, setId: string): Promise<boolean> {
-    if (!!this.store.srsData.notes[path]) return false;
+    if (this.store.srsData.notes[path]) return false;
     if (!this.store.srsData.sets[setId]) return false;
     const newNote: NoteState = {
       setId,
@@ -79,6 +92,4 @@ export class NoteManager {
     await this.save();
     return true;
   }
-
-  
 }

@@ -75,7 +75,8 @@ export default class MemryPlugin extends Plugin {
     }); */
   }
 
-  onunload() {}
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  onunload(): void {}
 
   public rerenderStatusBar(text?: string) {
     this.statusBar.setAttr("title", "memry");
