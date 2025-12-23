@@ -72,7 +72,7 @@ export class DataManager {
   }
 
   async save() {
-    await this.plugin.dashboard.rerender();
+    await this.plugin?.dashboard?.rerender();
     await this.plugin.saveData({
       settings: this.settings,
       srsData: this.srsData,

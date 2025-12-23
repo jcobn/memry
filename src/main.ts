@@ -20,15 +20,15 @@ export default class MemryPlugin extends Plugin {
     this.dataManager = new DataManager(this);
     await this.dataManager.init();
 
+    this.dashboard = new Dashboard(this);
+    await this.dashboard.init();
+
     this.statusBar = this.addStatusBarItem();
     this.rerenderStatusBar();
 
     this.noteManager = new NoteManager(this);
 
     this.addSettingTab(new DashboardPathSettingTab(this.app, this));
-
-    this.dashboard = new Dashboard(this);
-    await this.dashboard.init();
 
     this.commands = new Commands(this);
     this.commands.addCommands();
