@@ -53,11 +53,6 @@ export class NoteManager {
     await this.store.save();
   }
 
-  public getNoteName(path: string) {
-    const ar = path.split("/");
-    const l = ar.length;
-    return ar[l - 1];
-  }
 
   public async markAsLearned(nr: Record<string, NoteState>) {
     const path: string = Object.keys(nr)[0];

@@ -2,9 +2,11 @@ import { Modal } from "obsidian";
 import MemryPlugin from "./main";
 import { CreateSetModal } from "./modals/CreateSetModal";
 import { getReviewQueue } from "./utils/srsLogic";
+import { ReviewModal } from "./modals/ReviewModal";
 
 export default class Commands {
   plugin: MemryPlugin;
+  modal: ReviewModal;
 
   constructor(plugin: MemryPlugin) {
     this.plugin = plugin;
@@ -14,15 +16,8 @@ export default class Commands {
     const plugin = this.plugin;
 
     plugin.addCommand({
-      id: "test",
-      name: "Test",
-      callback: () => {
-        console.log(getReviewQueue(this.plugin.dataManager.srsData.notes));
-      },
-    });
-    plugin.addCommand({
       id: "load",
-      name: "Load",
+      name: "Load (dev)",
       callback: async () => {
         await this.plugin.dataManager.init();
       },
@@ -33,6 +28,13 @@ export default class Commands {
       name: "create new set",
       callback: () => {
         new CreateSetModal(this.plugin).open();
+      },
+    });
+    plugin.addCommand({
+      id: "review",
+      name: "review notes",
+      callback: () => {
+        this.plugin.reviewManager.startReview();
       },
     });
   }

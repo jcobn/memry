@@ -2,7 +2,7 @@ import { TFile } from "obsidian";
 import MemryPlugin from "./main";
 import { NoteState } from "./managers/DataManager";
 import { daysBetween, daysLate } from "./utils/time";
-import { isDue, isFragile, isLearned } from "./utils/srsLogic";
+import { getNoteName, isDue, isFragile, isLearned, isNotLearnedYet } from "./utils/srsLogic";
 import { title } from "process";
 
 export const DAY_TO_MILLIS = 24 * 60 * 60 * 1000;
@@ -71,26 +71,29 @@ export class Dashboard {
             const li = ul.createEl("li");
 
             if (!path) continue;
-            if (isDue(note)) {
-              li.createSpan({
-                text: daysLate(note.nextReview) >= 1 ? "‼️ " : "❗ ",
-                attr: { title: "due" },
-              });
+            if (!isNotLearnedYet(note)) {
+              if (isDue(note)) {
+                console.log(path + " " + daysLate(note.nextReview));
+                li.createSpan({
+                  text: daysLate(note.nextReview) >= 1 ? "‼️ " : "❗ ",
+                  attr: { title: "due" },
+                });
+              }
+              const badge = isFragile(note)
+                ? { text: "🔴", attr: { title: "fragile" } }
+                : isLearned(note)
+                ? { text: "🟢", attr: { title: "learned" } }
+                : { text: "🟡", attr: { title: "learning" } };
+              li.createSpan(badge);
             }
-            const badge = isFragile(note)
-              ? { text: "🔴", attr: { title: "fragile" } }
-              : isLearned(note)
-              ? { text: "🟢", attr: { title: "learned" } }
-              : { text: "🟡", attr: { title: "learning" } };
-            li.createSpan(badge);
             li.createSpan().innerHTML = `
-            <a href="obsidian://open?vault=${this.plugin.app.vault.getName()}&file=${path}">${this.plugin.noteManager.getNoteName(
+            <a href="obsidian://open?vault=${this.plugin.app.vault.getName()}&file=${path}">${getNoteName(
               path
             )}</a> — 
             `;
 
             let info = `${
-              note.lastReview === null
+              isNotLearnedYet(note)
                 ? "not reviewing yet."
                 : "next review: " +
                   new Date(note.nextReview).toLocaleDateString() +
@@ -98,9 +101,9 @@ export class Dashboard {
                   daysBetween(Date.now(), note.nextReview) +
                   " day/s)" +
                   ", last review " +
-                  (daysBetween(note.lastReview, Date.now()) === 0
+                  (daysBetween(note.lastReview!, Date.now()) === 0
                     ? "today"
-                    : daysBetween(note.lastReview, Date.now()) + " day(s) ago")
+                    : daysBetween(note.lastReview!, Date.now()) + " day(s) ago")
             }`;
             info += `<br>
             S: ${note.stability.toFixed(1)}, D: ${note.difficulty.toFixed(1)}, 

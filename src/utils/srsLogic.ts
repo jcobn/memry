@@ -2,7 +2,7 @@ import { DAY_TO_MILLIS } from "src/Dashboard";
 import { NoteState } from "src/managers/DataManager";
 import { daysLate, now, startOfDay } from "./time";
 
-enum Rating {
+export enum Rating {
   AGAIN = 1, //failed recall
   HARD = 2, //partial recall
   GOOD = 3, //solid recall
@@ -109,6 +109,12 @@ export function isDue(note: NoteState): boolean {
   return startOfDay(now()) >= startOfDay(note.nextReview);
 }
 
+export function isNotLearnedYet(
+  note: NoteState
+): note is NoteState & { lastReview: null } {
+  return note.lastReview === null;
+}
+
 export function reviewPriority(note: NoteState): number {
   const overdueDays = daysLate(note.nextReview);
   const score = getKnowledgeScore(note);
@@ -118,9 +124,15 @@ export function reviewPriority(note: NoteState): number {
 
 export function getReviewQueue(
   notes: Record<string, NoteState>
-): { id: string; note: NoteState }[] {
+): { path: string; note: NoteState }[] {
   return Object.entries(notes)
     .filter(([_, note]) => isDue(note))
-    .map(([id, note]) => ({ id, note }))
+    .map(([path, note]) => ({ path, note }))
     .sort((a, b) => reviewPriority(b.note) - reviewPriority(a.note));
+}
+
+export function getNoteName(path: string) {
+  const ar = path.split("/");
+  const l = ar.length;
+  return ar[l - 1];
 }

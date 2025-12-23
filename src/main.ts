@@ -17,6 +17,8 @@ import { DataManager } from "./managers/DataManager";
 import { Dashboard } from "./Dashboard";
 import { NoteManager } from "./managers/NoteManager";
 import { MenuItems } from "./MenuItems";
+import { getReviewQueue } from "./utils/srsLogic";
+import { ReviewManager } from "./managers/ReviewManager";
 
 export default class MemryPlugin extends Plugin {
   commands: Commands;
@@ -25,21 +27,14 @@ export default class MemryPlugin extends Plugin {
   dashboard: Dashboard;
   statusBar: HTMLElement;
   menuItems: MenuItems;
+  reviewManager: ReviewManager;
 
   async onload() {
     this.dataManager = new DataManager(this);
     await this.dataManager.init();
 
-    const ribbonIconEl = this.addRibbonIcon(
-      "calendar-check",
-      "memry",
-      (_evt: MouseEvent) => {
-        new Notice("This is a notice!");
-      }
-    );
-
     this.statusBar = this.addStatusBarItem();
-    this.statusBar.setText("X notes to review.");
+    this.rerenderStatusBar();
 
     this.noteManager = new NoteManager(this);
 
@@ -54,6 +49,17 @@ export default class MemryPlugin extends Plugin {
     this.menuItems = new MenuItems(this);
     this.menuItems.init();
 
+    this.registerInterval(
+      window.setInterval(() => {
+        this.rerenderStatusBar();
+      }, 1000 * 15)
+    );
+
+    this.reviewManager = new ReviewManager(this);
+
+    this.addRibbonIcon("graduation-cap", "memry", (_evt: MouseEvent) => {
+      this.reviewManager.startReview();
+    });
     /* this.registerView(
       SRS_VIEW_TYPE,
       (leaf: WorkspaceLeaf) => new SRSDashboardView(leaf, this)
@@ -71,8 +77,15 @@ export default class MemryPlugin extends Plugin {
 
   onunload() {}
 
-  public rerenderStatusBar(text: string) {
-    this.statusBar.setText(text);
+  public rerenderStatusBar(text?: string) {
+    this.statusBar.setAttr("title", "memry");
+    if (!text)
+      this.rerenderStatusBar(
+        `${getReviewQueue(
+          this.dataManager.srsData.notes
+        ).length.toString()} notes to review.`
+      );
+    else this.statusBar.setText(text);
   }
 }
 

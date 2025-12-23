@@ -11,7 +11,7 @@ export function daysBetween(a: number, b: number): number {
 }
 
 export function daysLate(nextReview: number): number {
-  return Math.max(0, Math.floor((Date.now() - nextReview) / DAY_TO_MILLIS));
+  return Math.max(0, daysBetween(nextReview, Date.now()));
 }
 
 export function now(): number {

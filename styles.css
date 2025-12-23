@@ -53,3 +53,28 @@
 .srs-btn-learned:hover {
   background: rgba(0, 200, 0, 0.1);
 }
+
+
+/* Buttons container */
+.srs-review-buttons {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
+}
+
+/* All review buttons */
+.srs-review-buttons button {
+  padding: 0.6rem 0;
+  font-size: 0.9rem;
+  border-radius: 6px;
+  transition: transform 0.05s ease, opacity 0.1s ease;
+}
+
+/* Hover / active feel */
+.srs-review-buttons button:hover {
+  opacity: 0.9;
+}
+
+.srs-review-buttons button:active {
+  transform: scale(0.97);
+}
