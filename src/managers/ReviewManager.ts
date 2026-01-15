@@ -15,7 +15,7 @@ export class ReviewManager {
   }
 
   public startReview(): void {
-    this.queue = getReviewQueue(this.plugin.dataManager.srsData.notes);
+    this.queue = getReviewQueue(this.plugin.noteManager.getAllNotes());
     if (this.modal === null) {
       if (this.queue.length === 0)
         return memryNotice("no notes to review today");

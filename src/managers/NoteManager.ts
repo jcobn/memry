@@ -20,14 +20,17 @@ export class NoteManager {
     await this.save();
   }
 
-  async deleteNote(id: string) {
+  async deleteNote(id: string): Promise<boolean> {
     const ex: boolean = id in this.store.srsData.notes;
     delete this.store.srsData.notes[id];
     await this.save();
     return ex;
   }
 
-  async createSet(name: string, description: string | null = null) {
+  async createSet(
+    name: string,
+    description: string | null = null
+  ): Promise<string> {
     let id: string = randomUUID().toString();
     while (this.store.srsData.sets[id]) {
       id = randomUUID().toString();

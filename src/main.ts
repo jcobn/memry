@@ -67,11 +67,10 @@ export default class MemryPlugin extends Plugin {
 
   public rerenderStatusBar(text?: string) {
     this.statusBar.setAttr("title", "memry");
+    const n = getReviewQueue(this.dataManager.srsData.notes).length;
     if (!text)
       this.rerenderStatusBar(
-        `${getReviewQueue(
-          this.dataManager.srsData.notes
-        ).length.toString()} notes to review.`
+        `${n.toString()} ${n === 1 ? "note" : "notes"} to review.`
       );
     else this.statusBar.setText(text);
   }

@@ -8,7 +8,7 @@ const DEFAULT_SETTINGS: MemrySettings = {
   dashboardPath: "memry dashboard.md",
 };
 
-const SRS_DATA_VERSION = 1;
+export const SRS_DATA_VERSION = 1;
 const DEFAULT_SRS_DATA: SRSData = {
   metadata: {
     version: SRS_DATA_VERSION,

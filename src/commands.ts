@@ -1,13 +1,11 @@
 import MemryPlugin from "./main";
 import { CreateSetModal } from "./modals/CreateSetModal";
-import { ReviewModal } from "./modals/ReviewModal";
 import { SetPickerModal } from "./modals/SetPickerModal";
 import { memryNotice } from "./utils/notice";
 import { NotePickerModal } from "./modals/NotePickerModal";
 
 export default class Commands {
   plugin: MemryPlugin;
-  modal: ReviewModal;
 
   constructor(plugin: MemryPlugin) {
     this.plugin = plugin;

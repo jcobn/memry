@@ -74,22 +74,6 @@ export class ReviewModal extends Modal {
         this.phase = ReviewPhase.RATE;
       } else errorNotice(this.path + " not instance of TFile");
     });
-    /*const buttons = contentEl.createEl("div", { cls: "srs-review-buttons" });
-
-    const makeBtn = (label: string, rating: Rating) => {
-      new ButtonComponent(buttons)
-        .setButtonText(label)
-        .onClick(() => {
-          console.log(rating);
-          this.close();
-        })
-        .setClass("srs-review-" + rating);
-    };
-
-    makeBtn("again", Rating.AGAIN);
-    makeBtn("hard", Rating.HARD);
-    makeBtn("good", Rating.GOOD);
-    makeBtn("easy", Rating.EASY);*/
   }
 
   private getNoteLabel() {
@@ -97,5 +81,4 @@ export class ReviewModal extends Modal {
       this.plugin.dataManager.srsData.sets[this.note.setId]?.name
     }`;
   }
-
 }

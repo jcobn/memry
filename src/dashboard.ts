@@ -59,7 +59,7 @@ export class Dashboard {
         const sets = this.plugin.noteManager.getAllSets();
 
         if (!Object.entries(notes).length) {
-          el.createEl("p", { text: "No SRS notes yet." });
+          el.createEl("p", { text: "no notes yet." });
           return;
         }
 
@@ -88,7 +88,7 @@ export class Dashboard {
           }
 
           if (!setNotes.length) {
-            setContainer.createEl("p", { text: "No notes in this set." });
+            setContainer.createEl("p", { text: "no notes in this set." });
             continue;
           }
 

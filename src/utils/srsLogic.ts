@@ -60,11 +60,14 @@ export function getStabilityAfterSuccess(
     rating === Rating.HARD ? 1.1 : rating === Rating.GOOD ? 1.8 : 2.5;
 
   const difficultyPenalty = 1 - (difficulty - 5) * 0.05;
-  const latenessPenalty = Math.max(0.7, 1 - daysLateAssert(nextReview) * 0.05);
+  const daysLate = daysLateAssert(nextReview);
 
-  const growth = baseGrowth * difficultyPenalty * latenessPenalty;
+  const growth = baseGrowth * difficultyPenalty;
 
-  return Math.max(1, stability * growth);
+  const toAddDays =
+    rating >= 3 ? (rating === Rating.EASY ? daysLate : daysLate * 0.35) : 0;
+
+  return Math.max(1, stability * growth + toAddDays);
 }
 
 export function getNextIntervalDays(stability: number): number {

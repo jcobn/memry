@@ -14,8 +14,6 @@ export class MenuItems {
   public init() {
     this.plugin.registerEvent(
       this.plugin.app.workspace.on("file-menu", (menu, file) => {
-        //TODO: for folders too
-
         if (!(file instanceof TFile) && file instanceof TFolder) {
           this.allFilesAction(menu, FolderAction.ADD, file);
           this.allFilesAction(menu, FolderAction.REMOVE, file);
