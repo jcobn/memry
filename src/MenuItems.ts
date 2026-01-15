@@ -103,7 +103,6 @@ export class MenuItems {
           i.onClick(async () => {
             let ct = 0;
             for (const ch of file.children) {
-              //TODO: multilayer
               if (!(ch instanceof TFile)) continue;
               if (await this.plugin.noteManager.trackNote(ch.path, setId)) ct++;
             }

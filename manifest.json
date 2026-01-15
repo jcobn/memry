@@ -1,7 +1,7 @@
 {
   "id": "memry",
   "name": "memry",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "minAppVersion": "0.15.0",
   "description": "a simple obsidian note-based spaced repetition plugin",
   "author": "jcobn",
